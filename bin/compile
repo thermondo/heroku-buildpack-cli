@@ -1,0 +1,17 @@
+#!/bin/sh
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+TOKEN=$(cat "${ENV_DIR}/HEROKU_CLI_TOKEN")
+EMAIL=$(cat "${ENV_DIR}/HEROKU_CLI_EMAIL")
+
+if [ ! -f /usr/local/heroku ]; then
+    wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+fi
+
+echo "machine api.heroku.com" > .netrc
+echo "	login ${EMAIL}" >> .netrc
+echo "	password ${TOKEN}" >> .netrc
+

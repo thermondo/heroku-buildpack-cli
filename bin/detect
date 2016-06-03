@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Heroku CLI buildpack detected"
+exit 0
+
