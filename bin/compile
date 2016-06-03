@@ -1,17 +1,32 @@
 #!/bin/sh
 
+set -e
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
+CURRENT_DIR=$(pwd)
 
 TOKEN=$(cat "${ENV_DIR}/HEROKU_CLI_TOKEN")
 EMAIL=$(cat "${ENV_DIR}/HEROKU_CLI_EMAIL")
 
-if [ ! -f /usr/local/heroku ]; then
-    wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-fi
+HEROKU_CLIENT_URL="https://s3.amazonaws.com/assets.heroku.com/heroku-client/heroku-client.tgz"
 
-echo "machine api.heroku.com" > .netrc
-echo "	login ${EMAIL}" >> .netrc
-echo "	password ${TOKEN}" >> .netrc
+BIN_DIR="$BUILD_DIR/.heroku/heroku"
 
+rm -rf $BIN_DIR
+mkdir -p $BIN_DIR
+cd $BIN_DIR
+curl -s $HEROKU_CLIENT_URL | tar xz
+mv heroku-client/* .
+rmdir heroku-client
+
+cd $CURRENT_DIR
+mkdir -p "$BUILD_DIR/.profile.d"
+rm -f "$BUILD_DIR/.profile.d/heroku.sh"
+
+echo "export PATH=\"~/.heroku/heroku/bin:\$PATH\"" >> "$BUILD_DIR/.profile.d/heroku.sh"
+
+echo "machine api.heroku.com" > "$BUILD_DIR/.netrc"
+echo "	login ${EMAIL}" >> "$BUILD_DIR/.netrc"
+echo "	password ${TOKEN}" >> "$BUILD_DIR/.netrc"
