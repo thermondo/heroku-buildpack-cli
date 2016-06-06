@@ -2,14 +2,16 @@
 
 set -e
 
-BUILD_DIR=$1
-CACHE_DIR=$2
+mkdir -p "$1" "$2"
+BUILD_DIR=$(cd "$1/" && pwd)
+CACHE_DIR=$(cd "$2/" && pwd)
 ENV_DIR=$3
 CURRENT_DIR=$(pwd)
 
 TOKEN=$(cat "${ENV_DIR}/HEROKU_CLI_TOKEN")
 EMAIL=$(cat "${ENV_DIR}/HEROKU_CLI_EMAIL")
 
+echo "Installing heroku toolbelt..."
 HEROKU_CLIENT_URL="https://s3.amazonaws.com/assets.heroku.com/heroku-client/heroku-client.tgz"
 
 BIN_DIR="$BUILD_DIR/.heroku/heroku"
@@ -21,12 +23,13 @@ curl -s $HEROKU_CLIENT_URL | tar xz
 mv heroku-client/* .
 rmdir heroku-client
 
+echo "Setting PATH..."
 cd $CURRENT_DIR
-mkdir -p "$BUILD_DIR/.profile.d"
-rm -f "$BUILD_DIR/.profile.d/heroku.sh"
+mkdir -p $BUILD_DIR/.profile.d
+rm -f $BUILD_DIR/.profile.d/heroku.sh
+echo 'export PATH=$PATH:$HOME/.heroku/heroku/bin' >> $BUILD_DIR/.profile.d/heroku.sh
 
-echo "export PATH=\"~/.heroku/heroku/bin:\$PATH\"" >> "$BUILD_DIR/.profile.d/heroku.sh"
-
+echo "Setting up netrc..."
 echo "machine api.heroku.com" > "$BUILD_DIR/.netrc"
 echo "	login ${EMAIL}" >> "$BUILD_DIR/.netrc"
 echo "	password ${TOKEN}" >> "$BUILD_DIR/.netrc"
