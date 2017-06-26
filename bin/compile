@@ -12,16 +12,15 @@ TOKEN=$(cat "${ENV_DIR}/HEROKU_CLI_TOKEN")
 EMAIL=$(cat "${ENV_DIR}/HEROKU_CLI_EMAIL")
 
 echo "Installing heroku toolbelt..."
-HEROKU_CLIENT_URL="https://s3.amazonaws.com/assets.heroku.com/heroku-client/heroku-client.tgz"
+HEROKU_CLIENT_URL="https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli-linux-x64.tar.gz"
 
 BIN_DIR="$BUILD_DIR/.heroku/heroku"
 
 rm -rf $BIN_DIR
-mkdir -p $BIN_DIR
-cd $BIN_DIR
-curl -s $HEROKU_CLIENT_URL | tar xz
-mv heroku-client/* .
-rmdir heroku-client
+mkdir -p "$BUILD_DIR/.heroku"
+cd /tmp
+curl -sLo- $HEROKU_CLIENT_URL | tar xzf -
+mv heroku-cli-*/ $BIN_DIR
 
 echo "Setting PATH..."
 cd $CURRENT_DIR
