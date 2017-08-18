@@ -5,7 +5,7 @@ Installs the [Heroku toolbelt][heroku-toolbelt] on a heroku dyno.
 ### Installation
 
 ```shell
-heroku buildpacks:add https://github.com/Thermondo/heroku-cli-buildpack
+heroku buildpacks:add https://github.com/Thermondo/heroku-buildpack-cli
 heroku config:set HEROKU_CLI_TOKEN=`heroku auth:token`
 heroku config:set HEROKU_CLI_EMAIL=`heroku auth:whoami`
 ```
